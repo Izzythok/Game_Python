@@ -12,7 +12,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(topleft = position)
         self.direction = pygame.math.Vector2()
         self.speed = SPEED_ENEMY
-        self.status_gravity = 0.6
+        self.status_gravity = 3
         self.one_jump = False
         self.flag_move = False
 
@@ -46,3 +46,7 @@ class Enemigo(pygame.sprite.Sprite):
     def update(self):
         self.animation()
         self.reverse_image()
+
+    def collide_with_player(self,player):
+        if(pygame.sprite.collide_rect(self,player)):
+            player.kill

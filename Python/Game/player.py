@@ -13,10 +13,9 @@ class Player(pygame.sprite.Sprite):
         self.direction = pygame.math.Vector2()
         self.speed = SPEED
         self.status_gravity = 2
-        self.jump_speed = -20
+        self.jump_speed = -28
         self.flag_direct = True
         self.one_jump = False
-        # self.flag_move = False
         
         
     def input(self):
@@ -67,8 +66,7 @@ class Player(pygame.sprite.Sprite):
             self.index_status = 0
         self.image = self.animations[self.status][int(self.index_status)]
         if(not self.flag_direct):
-            flipped_image = pygame.transform.flip(self.image,True,False)
-            self.image = flipped_image
+            self.image = pygame.transform.flip(self.image,True,False)
     
     
     def load_sprites(self):
@@ -77,7 +75,9 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         self.rect.x += self.direction.x * self.speed
 
-    
+    def collide(self,other):
+        other.collide_with_player(self)
+        
     def update(self):
         self.input()
         self.get_status()

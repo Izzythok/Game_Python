@@ -4,16 +4,17 @@ from player import Player
 from enemigo import Enemigo
 
 class Terreno:
-    def __init__(self,level_surface ,map_terrain) -> None:
-        self.display_surface = level_surface
-        self.setup_terrain(map_terrain)
+    def __init__(self,map_terrain) -> None:
+        self.platforms_group = pygame.sprite.Group()
+        self.block_clear_group = pygame.sprite.Group()
+        self.player_group_single = pygame.sprite.GroupSingle()
+        self.enemys_group = pygame.sprite.Group()
+        self.load_objets_map_terrain(map_terrain)
 
-    def setup_terrain(self,data):
-        self.platforms = pygame.sprite.Group()
-        self.block_clear = pygame.sprite.Group()
-        self.player_1 = pygame.sprite.GroupSingle()
-        self.enemy_1 = pygame.sprite.GroupSingle()
-        for index_fil,fila in enumerate(data):
+    
+
+    def load_objets_map_terrain(self,map):
+        for index_fil,fila in enumerate(map):
             for index_col,columna in enumerate(fila):
                 x = index_col * size_plataforma
                 y = index_fil * size_plataforma
@@ -35,73 +36,47 @@ class Terreno:
                     self.block_platform = Plataforma((x,y),size_plataforma,"./Images/tile_space/X.png")
                 elif (columna == "R"):
                     self.block = Plataforma((x,y),size_plataforma,"./Images/Surface/E.png")
-                    self.block_clear.add(self.block)
+                    self.block_clear_group.add(self.block)
                 elif (columna == "p"):
                     self.player = Player((x,y),"./Images/Character")
-                    self.player_1.add(self.player)
+                    self.player_group_single.add(self.player)
                 elif (columna == "E"):
                     self.enemy = Enemigo((x,y),"./Images/Enemies/AngryPing")
-                    self.enemy_1.add(self.enemy)
+                    self.enemys_group.add(self.enemy)
 
-                self.platforms.add(self.block_platform)
-        
-    
-    # def collision_vertical_enemy(self):
-    #     ob_enemy: Enemigo = self.enemy_1.sprite
-    #     ob_enemy.move()
-    #     for sprite in self.platforms.sprites():
-    #         if(sprite.rect.colliderect(ob_enemy.rect)):   
-    #             ob_enemy.flag_move = True
+                self.platforms_group.add(self.block_platform)
     
     def collion_reverse_enemy(self):
-        enemy = self.enemy_1.sprite
-        if(pygame.sprite.spritecollide(enemy,self.block_clear,False)):
-            enemy.reverse()
+        for enemy in self.enemys_group.sprites():
+            if(pygame.sprite.spritecollide(enemy,self.block_clear_group,False)):
+                enemy.reverse()
 
 
-    def collision_vertical(self,sprite_single,sprite_group):
-        objet = sprite_single.sprite
-        objet.move()
+    def collision_vertical(self,object_sprite,sprite_group):
+        object_sprite.move()
         for sprite in sprite_group.sprites():
-            if(sprite.rect.colliderect(objet.rect)):
-                if(objet.direction.x > 0):
-                    objet.rect.right = sprite.rect.left
-                elif(objet.direction.x < 0):
-                    objet.rect.left = sprite.rect.right
+            if(sprite.rect.colliderect(object_sprite.rect)):
+                if(object_sprite.direction.x > 0):
+                    object_sprite.rect.right = sprite.rect.left
+                elif(object_sprite.direction.x < 0):
+                    object_sprite.rect.left = sprite.rect.right
                 
 
-    def collision_horizontal(self,sprite_single,sprite_group):
-        object = sprite_single.sprite
-        object.gravity()
+    def collision_horizontal(self,object_sprite,sprite_group):
+        object_sprite.gravity()
         for sprite in sprite_group.sprites():
-            if(sprite.rect.colliderect(object.rect)):
-                if(object.direction.y > 0):
-                    object.rect.bottom = sprite.rect.top
-                    object.direction.y = 0
-                    object.one_jump = True
-                    object.flag_move = True
-                elif(object.direction.y < 0):
-                    object.rect.top = sprite.rect.bottom
+            if(sprite.rect.colliderect(object_sprite.rect)):
+                if(object_sprite.direction.y > 0):
+                    object_sprite.rect.bottom = sprite.rect.top
+                    object_sprite.direction.y = 0
+                    object_sprite.one_jump = True
+                    object_sprite.flag_move = True
+                elif(object_sprite.direction.y < 0):
+                    object_sprite.rect.top = sprite.rect.bottom
         
-        if (object.one_jump and object.direction.y < 0 or object.direction.y > 0):
-            object.one_jump = False
-        
-
+        if (object_sprite.one_jump and object_sprite.direction.y < 0 or object_sprite.direction.y > 0):
+            object_sprite.one_jump = False
     
-    def run(self):
-        # self.collision_vertical_enemy()
-        self.collision_vertical(self.enemy_1,self.platforms)
-        self.collision_horizontal(self.enemy_1,self.platforms)
-
-        self.collision_vertical(self.player_1,self.platforms)
-        self.collision_horizontal(self.player_1,self.platforms)
-
-        self.block_clear.draw(self.display_surface)
-        self.platforms.draw(self.display_surface)
-        self.collion_reverse_enemy()
-        self.enemy_1.draw(self.display_surface)
-        self.enemy.update()
-
-        self.player_1.draw(self.display_surface)
-        self.player.update()
-        
+    def collide_with_player(self,player):
+        self.collision_vertical(player,self.platforms_group)
+        self.collision_horizontal(player,self.platforms_group)

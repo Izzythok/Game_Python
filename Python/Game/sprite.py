@@ -16,6 +16,7 @@ class Sprite:
         """
         surfece_list = []
         for _,_,folder in walk(path):
+            print(folder)
             for i in range(len(folder)):
                 full_path = path + "/" + folder[i]
                 picture = pygame.image.load(full_path).convert_alpha()

@@ -5,7 +5,6 @@ class Game:
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
-        self.sure = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
         self.level_surface = Level_Surface()
 
