@@ -2,10 +2,10 @@ from os import walk
 import pygame
 
 class Sprite:
-    def __init__(self,path_folder) -> None:
+    def __init__(self,path_folder = None) -> None:
         self.path_folder = path_folder
 
-    def load_sprite_path(self,path)-> list:
+    def load_sprite_path(self,path: str,size: tuple)-> list:
         """Carga los sprite de una carpeta donde estan alojadas
 
         Args:
@@ -16,20 +16,19 @@ class Sprite:
         """
         surfece_list = []
         for _,_,folder in walk(path):
-            print(folder)
             for i in range(len(folder)):
                 full_path = path + "/" + folder[i]
                 picture = pygame.image.load(full_path).convert_alpha()
-                picture = pygame.transform.scale(picture, (35,35))
+                picture = pygame.transform.scale(picture, size)
                 surfece_list.append(picture)
         
         return surfece_list
     
-    def load_all_sprites(self):
+    def load_all_sprites(self,size: tuple):
         dict_sprites = {}
         for _,folder_name,_ in walk(self.path_folder):
             for i in range(len(folder_name)):
                 path = self.path_folder + "/" + folder_name[i]
-                dict_sprites[folder_name[i]] = self.load_sprite_path(path)
+                dict_sprites[folder_name[i]] = self.load_sprite_path(path,size)
         
         return dict_sprites

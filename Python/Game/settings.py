@@ -1,40 +1,24 @@
-from os import walk
 import pygame , sys, os
 
 map_1 = [
 "1111111111111111111111",
-"2          02        0",
-"2    XX    02      53X",
-"234  02    02  4536  0",
-"2    02  p 02        0",
+"2         N02       W0",
+"2 M  XX   XX2 R  E R53X",
+"X34  02    02  4536  0",
+"2   M02 M  02 R E  RM0",
 "2  34XX34  02  4536  0",
-"2    02    02 R E  R 0",
-"X34  02  3402  4536  0",
-"2    02   R E  R     0",
-"2   XXX    4536    XX0",
+"2 M  02   M02 R E  RM0",
+"X34  02  34XX  4536  0",
+"2   M02   R E  R    N0",
+"2p  XXX  E 4536    XX0",
 "1111111111111111111111",
 ]
-
-map_2 = [
-"                       ",
-"                       ",
-"                       ",
-" XX      XXX        XX ",
-" XX                    ",
-" XXXXX          XX     ",
-" XXXXX       XXX       ",
-" XXX       XXXX        ",
-"       X   XXXX    XX  ",
-"     XXX   XXXXX   XX  ",
-" XXXXXXX   XXXXX   XX  ",
-]
-
-
 
 size_plataforma = 64
 SCREEN_WIDTH = 1406
 SCREEN_HEIGHT = 704
 CENTER = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+CLOSE = (SCREEN_WIDTH // 0.5, SCREEN_HEIGHT // 0.5)
 FPS = 30
 SPEED = 10
 SPEED_ENEMY = 8
