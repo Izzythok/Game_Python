@@ -7,7 +7,10 @@ from cronometro import Cronometro
 class Level_Surface:
     def __init__(self) -> None:
         self.display_surface = pygame.display.get_surface()
-        self.terrain = Terreno(map_1)
+        self.terrain = Terreno(map_0)
+        self.terrain.load_objets_map_terrain()
+        self.terrain_1 = Terreno(map_1)
+        self.terrain_1.load_objets_map_terrain_1()
         self.score = Puntuacion("freesansbold.ttf",32)
         self.cronomet = Cronometro("freesansbold.ttf",32,60)
         self.finish_game = None
@@ -16,14 +19,29 @@ class Level_Surface:
         self.load_music("./audios/song/Discord.mp3")
 
     def run(self):
-        self.display_surface.blit(self.load_background("./Images/Surface/Fondos/0.png",SCREEN_WIDTH,SCREEN_HEIGHT),(0,0))
-        game_over = self.setup_surface_level_1()
+        self.display_surface.blit(self.load_background("./Images/Surface/Fondos/0.png",SCREEN_WIDTH,SCREEN_HEIGHT),(0,0))   
+        self.setup_surface_level_1()
         self.time = self.cronomet.play()
         if(self.cronomet.time_over(self.time)):
-            self.finish_game = self.game_over   
-        return game_over
+            self.finish_game = self.game_over
+        return self.finish_game
     
-    def setup_surface_level_1(self)->bool:
+    def setup_surface_level_1(self):
+        sprite_player = self.terrain_1.player_group_single.sprite
+        if(sprite_player):
+            sprite_player.update()
+            sprite_player.collide(self.terrain_1)
+            sprite_player.lifes(150,25,self.terrain_1.life_group)
+            if(sprite_player.is_dead()):
+                sprite_player.reset_player()
+                for sprite in self.terrain_1.life_group.sprites():
+                    sprite.kill()
+                    break
+                    
+        self.terrain_1.player_group_single.draw(self.display_surface)
+        self.terrain_1.platforms_group.draw(self.display_surface)
+    
+    def setup_surface_level_0(self)->bool:
 
         #Player
         sprite_player = self.terrain.player_group_single.sprite
@@ -76,8 +94,7 @@ class Level_Surface:
             self.score.increase(coins.value_collide)
         #winner
         for win in self.terrain.cup_win_group.sprites():
-            win.collide_winner(sprite_player)
-            self.finish_game = win.cup_winner
+            self.finish_game = win.collide_winner(sprite_player)
             
         if(len(self.terrain.life_group) == 0):
                 self.finish_game = self.game_over

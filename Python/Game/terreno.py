@@ -6,6 +6,7 @@ from sprites_object import Items
 
 class Terreno:
     def __init__(self,map_terrain) -> None:
+        self.map_terrain = map_terrain
         self.platforms_group = pygame.sprite.Group()
         self.block_clear_group = pygame.sprite.Group()
         self.player_group_single = pygame.sprite.GroupSingle()
@@ -17,12 +18,63 @@ class Terreno:
 
         self.projectile_group = pygame.sprite.Group()
         self.life_group = pygame.sprite.Group()
-        self.load_objets_map_terrain(map_terrain)
+
+        # self.load_objets_map_terrain()
+
+    def load_objets_map_terrain_1(self):
+        for index_fil,fila in enumerate(self.map_terrain):
+            for index_col,columna in enumerate(fila):
+                x = index_col * size_plataforma
+                y = index_fil * size_plataforma
+                match columna:
+                    case "A":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/A.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "F":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/F.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "D":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/D.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "1":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/1.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "X":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/X.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "I":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/I.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "J":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/J.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "9":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/9.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "8":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/8.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "7":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/7.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "S":
+                        self.block_platform = Plataforma((x,y),(64,20),"./Images/tile_space/S.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "Q":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,29),"./Images/tile_space/Q.png")
+                        self.block_platform.image = pygame.transform.flip(self.block_platform.image,False,True)
+                        self.platforms_group.add(self.block_platform)
+                    case "p":
+                        self.player = Player((x,y),"./Images/Character",(35,35))
+                        self.player_group_single.add(self.player)
+                    
 
     
-    
-    def load_objets_map_terrain(self,map):
-        for index_fil,fila in enumerate(map):
+
+
+    def load_objets_map_terrain(self):
+
+        for index_fil,fila in enumerate(self.map_terrain):
             for index_col,columna in enumerate(fila):
                 x = index_col * size_plataforma
                 y = index_fil * size_plataforma
@@ -48,7 +100,6 @@ class Terreno:
                 elif (columna == "p"):
                     self.player = Player((x,y),"./Images/Character",(35,35))
                     self.player_group_single.add(self.player)
-                    self.player_group_single.sprite
                 elif (columna == "E"):
                     self.enemy = Enemigo((x,y),"./Images/Enemies/AngryPing",(35,35),"./audios/song/Angry.wav")
                     self.enemys_group.add(self.enemy)

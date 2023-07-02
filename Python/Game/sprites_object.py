@@ -32,7 +32,7 @@ class Items(Vidas):
         super().__init__(position, size, folder)
         self.song_path = song_path
         self.value_collide = 0
-        self.cup_winner = None
+        # self.cup_winner = None
 
     def play_song(self):
         self.song = pygame.mixer.Sound(self.song_path)
@@ -42,10 +42,12 @@ class Items(Vidas):
         self.song.stop()
 
     def collide_winner(self,player):
+        cup_winner = None
         if(pygame.sprite.collide_rect(self,player)):
             self.play_song()
             self.kill()
-            self.cup_winner = 1
+            cup_winner = 1
+        return cup_winner
 
     def collide_with_player(self, player):
         if(pygame.sprite.collide_rect(self,player)):
