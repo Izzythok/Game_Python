@@ -13,14 +13,21 @@ class Game:
         self.load_sprites()
         self.is_game_over = None
         self.flag_creem_game_over = False
+        self.try_again = True
+        self.flag_ranking = True
 
     def run(self):
         while True:
-            self.is_game_over = self.play()
+            if(self.try_again):
+                self.is_game_over = self.play()
+                self.try_again = None
+            
             if(self.is_game_over == 0):
                 self.over()
+                self.try_again = True
             elif(self.is_game_over == 1):
                 self.win()
+                self.try_again = True
     
     def win(self):
         rtn = 1
@@ -42,7 +49,12 @@ class Game:
                 break
 
             self.screen.blit(self.images["Winner"][0],(0,0))
-            self.show_score_total("Total Score: " + str(self.score_total()),CYAN,CENTER,self.screen)
+            value = self.score_total()
+            self.show_score_total("Total Score: " + str(value),CYAN,CENTER,self.screen)
+            if(self.flag_ranking):
+                self.add_ranking(value)
+                self.flag_ranking = False
+            self.show_ranking(self.screen)
             
             pygame.display.flip()
             
@@ -80,6 +92,7 @@ class Game:
                     elif evento.key == pygame.K_r:
                         self.is_game_over = None
                         rtn = 0
+                        break
             
             if(rtn == 0):
                 break
@@ -106,5 +119,64 @@ class Game:
     def score_total(self):
         value_total = None
         lis = self.level_surface.time.split(":")
-        value_total = self.level_surface.score.value + int(lis[1])*100
+        
+        value_total = self.level_surface.score.value + (int(lis[0])*60 + int(lis[1]))*100
         return value_total
+    
+    def show_ranking(self,surface: pygame.Surface):
+        players = self.read_archive()
+        count = 0
+        Rank = pygame.font.Font("freesansbold.ttf",30)
+        name_rank = Rank.render("RANKING:",True,BLUE)
+        surface.blit(name_rank,(200,250))
+        for player in players:
+            count += 25
+            font = pygame.font.Font("freesansbold.ttf",30)
+            score = font.render(player,True,BLUE)
+            surface.blit(score,(200,250 + count))
+
+
+
+    def add_ranking(self, data_archive: int|float|str):
+        count = 0
+        lis_player = self.read_archive()
+        lis_player_aux = self.read_archive()
+        count = len(lis_player) + 1
+        score = "Player_" + str(count) + ": " + str(data_archive)
+        lis_player.append(score)
+        lis_player_aux.append(score)
+        self.ordenar_lista(lis_player,lis_player_aux)
+
+        with open("Ranking.txt", "w") as file:
+            for player in lis_player:
+                player = player + "\n"
+                file.write(player)
+        
+        return score
+
+    def read_archive(self):
+        list_players = []
+        with open("Ranking.txt", "r") as file:
+            for linea in file:
+                linea = linea.replace("\n", "")
+                list_players.append(linea)
+        return list_players
+    
+    def get_value_string(self, lista: list):
+        list_value = []
+        for string in lista:
+            lis = string.split(":")
+            value = lis[1].replace(" ", "")
+            list_value.append(int(value))
+        return list_value
+             
+
+    def ordenar_lista(self,list_player: list,list_dismantle: list):
+        tam = len(list_player)
+        list_value = self.get_value_string(list_dismantle)
+        for i in range(0,tam-1):
+            for j in range(i+1,tam):
+                if(list_value[i] < list_value[j]):
+                    aux = list_player[i]
+                    list_player[i] = list_player[j]
+                    list_player[j] = aux 

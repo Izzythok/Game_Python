@@ -3,6 +3,8 @@ from plataforma import Plataforma
 from player import Player
 from enemigo import Enemigo
 from sprites_object import Items
+from boss import Boss
+import time
 
 class Terreno:
     def __init__(self,map_terrain) -> None:
@@ -19,9 +21,38 @@ class Terreno:
         self.projectile_group = pygame.sprite.Group()
         self.life_group = pygame.sprite.Group()
 
-        # self.load_objets_map_terrain()
+        self.boss_group = pygame.sprite.GroupSingle()
+        self.life_boss_group = pygame.sprite.Group()
+        self.this_moment = time.time()
+
+    def load_objets_map_terrain_2(self):
+        for index_fil,fila in enumerate(self.map_terrain):
+            for index_col,columna in enumerate(fila):
+                x = index_col * size_plataforma
+                y = index_fil * size_plataforma
+                match columna:
+                    case "A":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/A.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "1":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/1.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "X":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/X.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "8":
+                        self.block_platform = Plataforma((x,y),(size_plataforma,size_plataforma),"./Images/tile_space/8.png")
+                        self.platforms_group.add(self.block_platform)
+                    case "p":
+                        self.player = Player((x,y),"./Images/Character",(35,35))
+                        self.player_group_single.add(self.player)
+                    case "B":
+                        self.boss = Boss((x,y),"./Images/Boss",(120,120))
+                        self.boss_group.add(self.boss)
+
 
     def load_objets_map_terrain_1(self):
+
         for index_fil,fila in enumerate(self.map_terrain):
             for index_col,columna in enumerate(fila):
                 x = index_col * size_plataforma
@@ -67,6 +98,10 @@ class Terreno:
                     case "p":
                         self.player = Player((x,y),"./Images/Character",(35,35))
                         self.player_group_single.add(self.player)
+                    case "W":
+                        self.items = Items((x,y),(30,30),"./Images/Items/End","./audios/song/Winner.wav")
+                        self.items.rect.topleft = (x,y)
+                        self.cup_win_group.add(self.items)
                     
 
     
@@ -131,4 +166,15 @@ class Terreno:
 
     def collide_with_projectile(self, projectile):
         projectile.collide_with_platfomr(self.platforms_group)
+    
+    def time_generate_enemy(self,timer: int):
+        return time.time() - self.this_moment > timer
+    
+    def collide_with_boss(self, boss: Boss):
+        boss.collision_vertical(self.platforms_group)
+        boss.collision_horizontal(self.platforms_group)
         
+    def generate_enemys(self,pisition: tuple, size: tuple):
+        self.this_moment = time.time()
+        self.enemy = Enemigo(pisition,"./Images/Enemies/Toro",size,"./audios/song/Angry.wav")
+        self.enemys_group.add(self.enemy)

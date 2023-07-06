@@ -1,8 +1,9 @@
 import pygame , sys, os
+import random
 
 map_0 = [
 "1111111111111111111111",
-"2         N02       W0",
+"2         N02    p   W0",
 "2 M  XX   XX2 R  E R3X",
 "X34  02    02  4536  0",
 "2   M02 M  02 R E  RM0",
@@ -10,22 +11,36 @@ map_0 = [
 "2 M  02   M02 R E  RM0",
 "X34  02  34XX  4536  0",
 "2   M02   R E  R    N0",
-"2p  XXX  E 4536    XX0",
+"2   XXX  E 4536    XX0",
 "1111111111111111111111",
 ]
 
 map_1 = [    
-"111111111111 11 11 111",
-"X     I               ",
-"X   78I  DAAAAAAAAAAAAX",
-"X89   I               X",
-"X     IAAAAAAAAAAAF   X",
-"X   78I               X",
-"X     I  DAAAAAAAAAAAAX",
-"X89   I      QQ       X",
-"X   78IAAAAAAAAAAAAF  X",
-"Xp       SS  QQ       X",
+"111111111111 11111 111",
+"X     I         p    WX",
+"X8889 I   DAAAAAAAAAAAX",
+"X     I               X",
+"X 7888IAAAAAAAAAAAF   X",
+"X     I               X",
+"X8889 I   DAAAAAAAAAAAX",
+"X     I               X",
+"X 7888IAAAAAAAAAAAF   X",
+"X                     X",
 "JJJJJJJJJJJJJJJJJJJJJJ",
+]
+
+map_2 = [    
+"1111111111111111111111",
+"X                    X",
+"X                    X",
+"X                    X",
+"X                    X",
+"X                    X",
+"X               B    X",
+"X                    X",
+"X                    X",
+"X p                  X",
+"8888888888888888888888",
 ]
 
 size_plataforma = 64

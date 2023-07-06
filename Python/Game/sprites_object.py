@@ -41,12 +41,12 @@ class Items(Vidas):
     def stop_music(self):
         self.song.stop()
 
-    def collide_winner(self,player):
-        cup_winner = None
+    def collide_winner(self,player,rtn):
+        cup_winner = -1
         if(pygame.sprite.collide_rect(self,player)):
             self.play_song()
             self.kill()
-            cup_winner = 1
+            cup_winner = rtn
         return cup_winner
 
     def collide_with_player(self, player):
@@ -61,7 +61,6 @@ class Proyectil(Vidas):
         super().__init__(position, size, folder)
         self.speed = speed
         self.song_path = song_path
-        self.direction = pygame.math.Vector2()
     
     def play_song(self):
         self.song = pygame.mixer.Sound(self.song_path)
@@ -69,17 +68,22 @@ class Proyectil(Vidas):
 
     def move_positive_x(self):
         self.rect.x += self.speed
-        self.direction.x = 1
     
     def move_negative_x(self):
         self.rect.x -= self.speed
-        self.direction.x = -1
     
     def collide_with_player(self, player):
         if(pygame.sprite.collide_rect(self,player)):
             player.die()
             player.play_song_die("./audios/song/Die_Player.wav")
             self.kill()
+    
+    def collide_with_boss(self, boss):
+        if(pygame.sprite.collide_rect(self,boss)):
+            self.kill()
+            boss.die()
+            # boss.kill()
+
     
     def collide_with_platfomr(self, sprite_group):
         for sprite in sprite_group.sprites():
@@ -91,4 +95,5 @@ class Proyectil(Vidas):
 
     def update(self):
         self.move_negative_x()
+        self.animation()
 

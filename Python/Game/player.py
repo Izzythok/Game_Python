@@ -1,6 +1,7 @@
 from settings import *
 from sprite import Sprite
 from sprites_object import Vidas
+from sprites_object import Proyectil
 import time
 
 class Player(pygame.sprite.Sprite):
@@ -25,6 +26,8 @@ class Player(pygame.sprite.Sprite):
         self.stop_controllers = True
         self.dead_time = None
         self.life = 3
+        self.group_projectile = pygame.sprite.Group()
+        self.time_projectile = time.time()
         
         
         
@@ -39,12 +42,19 @@ class Player(pygame.sprite.Sprite):
                 self.flag_direct = False
             else:
                 self.direction.x = 0
+            
+            if(keys[pygame.K_a]):
+                if(self.can_shoot()):
+                    self.time_projectile = time.time()
+                    if(self.flag_direct):
+                        self.shoot(self.rect.center,(15,15),"./Images/Projectile/shuriken",-15)
+                    elif(not self.flag_direct):
+                        self.shoot(self.rect.center,(15,15),"./Images/Projectile/shuriken",15)
+
 
             if(keys[pygame.K_UP] and self.one_jump):
                 self.jump()
                 self.play_song_jump("./audios/song/Jump.wav")
-                
-
 
     def get_status(self):
         if(self.stop_status == True):
@@ -60,15 +70,12 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.status = "Right_idle"
 
-
-
     def gravity(self):
         self.direction.y +=self.status_gravity
         self.rect.y += self.direction.y
     
     def jump(self):
         self.direction.y = self.jump_speed
-
 
     def animation(self):
         self.index_status += self.increase_index
@@ -78,7 +85,14 @@ class Player(pygame.sprite.Sprite):
         if(not self.flag_direct):
             self.image = pygame.transform.flip(self.image,True,False)
     
-    
+    def shoot(self,position: tuple,size_bullet: tuple,path: str, speed_bullet: int):
+        projec = Proyectil(position,size_bullet,path,speed_bullet,"./audios/song/shuriken.wav")
+        projec.play_song()
+        self.group_projectile.add(projec)
+
+    def can_shoot(self):
+        return time.time() - self.time_projectile > 1
+
     def load_sprites(self):
         self.animations = self.sprite_player.load_all_sprites(self.size)
     
@@ -100,7 +114,6 @@ class Player(pygame.sprite.Sprite):
         self.song = pygame.mixer.Sound(song_path)
         self.song.play()
     
-
     def reset_player(self):
         self.rect.topleft = self.init_position
         self.speed = SPEED
@@ -136,7 +149,6 @@ class Player(pygame.sprite.Sprite):
                 elif(self.direction.x < 0):
                     self.rect.left = sprite.rect.right
         
-
     def collision_horizontal(self,sprite_group):
         self.gravity()
         for sprite in sprite_group.sprites():
@@ -151,6 +163,14 @@ class Player(pygame.sprite.Sprite):
         if (self.one_jump and self.direction.y < 0 or self.direction.y > 0):
             self.one_jump = False
     
+    def collide_with_boss(self, boss):
+        if(pygame.sprite.collide_rect(self,boss)):
+            self.die()
+            self.play_song_die("./audios/song/Die_Player.wav")
+            # boss.status = "Hit"
+            # boss.kill()
+
+
     def collide(self,other_object):
         other_object.collide_with_player(self)
         
